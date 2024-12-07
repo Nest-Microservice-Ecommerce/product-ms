@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaClient } from '@prisma/client';
@@ -6,13 +6,8 @@ import { PaginationDTO } from 'src/common/dto/pagination.dto';
 import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
-export class ProductService extends PrismaClient implements OnModuleInit {
+export class ProductService extends PrismaClient {
   private readonly logger = new Logger('ProductService');
-
-  async onModuleInit() {
-    await this.$connect();
-    this.logger.log('Database connected');
-  }
 
   create(createProductDto: CreateProductDto) {
     return this.product.create({
@@ -46,7 +41,10 @@ export class ProductService extends PrismaClient implements OnModuleInit {
     });
 
     if (!product) {
-      throw new RpcException('Product not found');
+      throw new RpcException({
+        message: 'Product not found',
+        status: HttpStatus.NOT_FOUND,
+      });
     }
 
     return product;
