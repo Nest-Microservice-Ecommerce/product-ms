@@ -43,7 +43,7 @@ export class ProductService extends PrismaClient {
     if (!product) {
       throw new RpcException({
         message: 'Product not found',
-        status: HttpStatus.NOT_FOUND,
+        status: HttpStatus.BAD_REQUEST,
       });
     }
 
