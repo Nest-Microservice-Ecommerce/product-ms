@@ -27,10 +27,8 @@ export class ProductService extends PrismaClient implements OnModuleInit {
   }
 
   async findAll(paginationDTO: PaginationDTO) {
-    const totalPages = Math.ceil(
-      (await this.product.count({ where: { available: true } })) /
-        paginationDTO.limit,
-    );
+    const total = await this.product.count({ where: { available: true } });
+    const totalPages = Math.ceil(total / paginationDTO.limit);
 
     return {
       data: await this.product.findMany({
@@ -40,7 +38,8 @@ export class ProductService extends PrismaClient implements OnModuleInit {
       }),
       metadata: {
         page: paginationDTO.page,
-        total: totalPages,
+        totalPages,
+        total,
       },
     };
   }
